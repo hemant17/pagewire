@@ -99,7 +99,7 @@
                                 <h5 class="font-medium text-gray-900">Slider {{ $sliderIndex + 1 }}</h5>
                                 <x-button icon="o-trash" label="Remove"
                                     class="px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md"
-                                    wire:click="removeHeroSlider({{ $index }}, {{ $sliderIndex }})" />
+                                    wire:click="repeaterRemove({{ $index }}, 'sliders', {{ $sliderIndex }})" />
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -174,7 +174,7 @@
                     class="w-full px-4 py-2 text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-md"
                     icon="o-plus"
                     label="Add New Slider"
-                    wire:click="addHeroSlider({{ $index }})" />
+                    wire:click="repeaterAdd({{ $index }}, 'sliders')" />
             </x-card>
         @endif
     </div>

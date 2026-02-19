@@ -18,6 +18,8 @@ return [
     // Defaults used by `php artisan pagewire:make-section`.
     'sections_make_path' => resource_path('views/sections'),
     'editor_make_path' => resource_path('views/livewire/pagewire/section-editors'),
+    // Per-section defaults/repeater schemas live here (one PHP file per section).
+    'definitions_path' => resource_path('pagewire/sections'),
     // Blade layout for Livewire pages (e.g., 'layouts.app'). Set to null to use caller/default.
     'layout' => null,
     // Table and model used for admin/user references on pages/global sections

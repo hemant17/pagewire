@@ -31,6 +31,28 @@ php artisan pagewire:make-section hero-area
 This creates:
 - Front-end section: `resources/views/sections/hero-area.blade.php`
 - Builder editor override (namespaced): `resources/views/livewire/pagewire/section-editors/hero-area.blade.php`
+- Defaults + repeater stubs: `resources/pagewire/sections/hero-area.php`
+
+## Defaults and repeaters
+To avoid editing vendor code, put per-section defaults and repeater item stubs in `resources/pagewire/sections/{section}.php`:
+```php
+return [
+  'defaults' => ['title' => '...', 'description' => '...'],
+  'repeaters' => [
+    'items' => ['title' => '', 'description' => ''],
+    'team_members.social_links' => ['platform' => '', 'url' => ''],
+  ],
+];
+```
+The builder reads these files automatically via `config('pagewire.definitions_path')`.
+
+In editor blades, use the generic methods:
+```blade
+wire:click="repeaterAdd({{ $index }}, 'items')"
+wire:click="repeaterRemove({{ $index }}, 'items', {{ $itemIndex }})"
+wire:click="repeaterAddNested({{ $index }}, 'team_members', {{ $memberIndex }}, 'social_links')"
+wire:click="repeaterRemoveNested({{ $index }}, 'team_members', {{ $memberIndex }}, 'social_links', {{ $linkIndex }})"
+```
 
 ## Dependencies
 - Laravel ^12

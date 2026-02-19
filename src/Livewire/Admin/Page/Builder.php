@@ -232,290 +232,204 @@ class Builder extends Component
 
     private function getDefaultSectionContent($sectionName): array
     {
-        $defaults = [
-            'hero-area' => [
-                'use_single_slider' => true,
+        $definition = $this->getSectionDefinition($sectionName);
+        if (isset($definition['defaults']) && is_array($definition['defaults'])) {
+            return $definition['defaults'];
+        }
+
+        // Back-compat starter defaults for the bundled hero editor.
+        return [
+            'use_single_slider' => true,
+            'background_image' => '',
+            'icon' => 'far fa-solar-panel',
+            'title' => 'We Provide Best Solar & <span>Renewable</span> Energy For You',
+            'subtitle' => 'Easy and reliable',
+            'description' => 'There are many variations of passages orem psum available but the majority have suffered alteration in some form by injected humour.',
+            'button1_text' => 'About More',
+            'button1_url' => '/about',
+            'button2_text' => 'Learn More',
+            'button2_url' => '/contact',
+            'sliders' => [],
+        ];
+    }
+
+    private function getSectionDefinition(string $sectionName): array
+    {
+        $base = config('pagewire.definitions_path', resource_path('pagewire/sections'));
+        if (! is_string($base) || $base === '') {
+            $base = resource_path('pagewire/sections');
+        }
+
+        $file = rtrim($base, '/')."/{$sectionName}.php";
+        if (is_file($file)) {
+            $data = require $file;
+            if (is_array($data)) {
+                return $data;
+            }
+        }
+
+        return [];
+    }
+
+    private function getRepeaterDefaultItem(string $sectionName, string $key): mixed
+    {
+        $definition = $this->getSectionDefinition($sectionName);
+        $repeaters = $definition['repeaters'] ?? null;
+
+        if (is_array($repeaters) && array_key_exists($key, $repeaters)) {
+            return $repeaters[$key];
+        }
+
+        // Fallback stubs to keep the bundled builder working even without a definition file.
+        $fallback = [
+            'features' => [
+                'icon' => 'staff',
+                'title' => 'New Feature',
+                'description' => 'Feature description',
+            ],
+            'sliders' => [
                 'background_image' => '',
                 'icon' => 'far fa-solar-panel',
-                'title' => 'We Provide Best Solar & <span>Renewable</span> Energy For You',
-                'subtitle' => 'Easy and reliable',
-                'description' => 'There are many variations of passages orem psum available but the majority have suffered alteration in some form by injected humour.',
-                'button1_text' => 'About More',
-                'button1_url' => '/about',
-                'button2_text' => 'Learn More',
+                'subtitle' => 'Professional Service',
+                'title' => 'Save Money With <span>Solar Energy</span> Solutions',
+                'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.',
+                'button1_text' => 'Our Services',
+                'button1_url' => '/services',
+                'button2_text' => 'Get Quote',
                 'button2_url' => '/contact',
-                'sliders' => [],
             ],
-            'feature-area' => [
-                'features' => [
-                    ['icon' => 'staff', 'title' => 'Expert Team', 'description' => 'Professional experts in our field'],
-                    ['icon' => 'money', 'title' => 'Quality Service', 'description' => 'High-quality solutions delivered'],
-                    ['icon' => 'support', 'title' => '24/7 Support', 'description' => 'Round the clock assistance'],
-                ],
+            'testimonials' => [
+                'author_name' => '',
+                'author_position' => '',
+                'author_image' => null,
+                'rating' => 5,
+                'testimonial_text' => '',
             ],
-            'about-area' => [
-                'subtitle' => 'About Us',
-                'title' => 'We Are The Best & Expert For <span>Your Solar</span> Solution',
-                'description' => 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even.',
-                'image1' => '',
-                'image2' => '',
-                'experience_years' => '30',
-                'experience_text' => 'Years Of Experience',
-                'features' => [
-                    ['icon' => 'install', 'title' => 'Easy Installation', 'description' => 'Take a look at our up of the round shows'],
-                    ['icon' => 'material', 'title' => 'Quality Material', 'description' => 'Take a look at our up of the round shows'],
-                ],
-                'button_text' => 'Discover More',
-                'button_url' => '/about',
-            ],
-            'cta-area' => [
-                'title' => 'Ready to Get Started?',
-                'description' => 'Contact us today for a consultation',
-                'background_image' => null,
-                'button_text' => 'Contact Us',
-                'button_url' => '/contact',
-            ],
-            'testimonial-area' => [
-                'subtitle' => 'Testimonials',
-                'title' => 'What Our <span>Clients</span> Say',
-                'description' => 'Read what our satisfied customers have to say about our solar solutions',
-                'button_text' => 'View All Reviews',
-                'button_url' => '/testimonials',
-                'testimonials' => [
-                    [
-                        'author_name' => 'John Smith',
-                        'author_position' => 'Homeowner, California',
-                        'author_image' => null,
-                        'rating' => 5,
-                        'testimonial_text' => 'The team did an amazing job installing our solar panels. We\'ve already seen significant savings on our energy bills!',
-                    ],
-                    [
-                        'author_name' => 'Sarah Johnson',
-                        'author_position' => 'Business Owner',
-                        'author_image' => null,
-                        'rating' => 5,
-                        'testimonial_text' => 'Professional installation and excellent customer service. Our business is now powered by clean energy!',
-                    ],
-                ],
-            ],
-            'team-area' => [
-                'subtitle' => 'Our Team',
-                'title' => 'Meet Our <span>Expert</span> Team',
-                'team_members' => [
-                    [
-                        'name' => 'John Anderson',
-                        'position' => 'Chief Executive Officer',
-                        'image' => null,
-                        'social_links' => [
-                            ['platform' => 'linkedin', 'url' => '#'],
-                            ['platform' => 'email', 'url' => 'john@company.com'],
-                        ],
-                    ],
-                    [
-                        'name' => 'Sarah Wilson',
-                        'position' => 'Technical Director',
-                        'image' => null,
-                        'social_links' => [
-                            ['platform' => 'linkedin', 'url' => '#'],
-                            ['platform' => 'twitter', 'url' => '#'],
-                        ],
-                    ],
-                ],
-            ],
-            'portfolio-area' => [
-                'subtitle' => 'Portfolio',
-                'title' => 'Our Recent <span>Projects</span>',
-                'description' => 'Explore our latest solar energy installations and renewable energy projects',
-                'portfolio_items' => [
-                    [
-                        'title' => 'Residential Solar Installation - California',
-                        'category' => 'residential',
-                        'image' => null,
-                        'project_url' => '/projects/residential-california',
-                    ],
-                    [
-                        'title' => 'Commercial Solar Farm - Texas',
-                        'category' => 'commercial',
-                        'image' => null,
-                        'project_url' => '/projects/commercial-texas',
-                    ],
-                ],
-            ],
-            'process-area' => [
-                'subtitle' => 'Working Process',
-                'title' => 'Easy steps for <span>solar and</span> renewable energy',
-                'steps' => [
-                    [
-                        'icon' => 'hybrid',
-                        'title' => 'Choose Service',
-                        'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page.',
-                    ],
-                    [
-                        'icon' => 'consult',
-                        'title' => 'Free Consultant',
-                        'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page.',
-                    ],
-                    [
-                        'icon' => 'plan',
-                        'title' => 'Planing & Analysis',
-                        'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page.',
-                    ],
-                    [
-                        'icon' => 'install-3',
-                        'title' => 'Solar Installation',
-                        'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page.',
-                    ],
-                ],
-            ],
-            'skill-area' => [
-                'subtitle' => 'Our Skills',
-                'title' => 'We offers solar <span>that\'s easy</span> and efficient.',
-                'description' => 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don\'t look even slightly believable.',
-                'feature_image' => null,
-                'skills' => [
-                    [
-                        'name' => 'Solar Panels',
-                        'percentage' => 85,
-                    ],
-                    [
-                        'name' => 'Solar Installation',
-                        'percentage' => 65,
-                    ],
-                    [
-                        'name' => 'Renewable Energy',
-                        'percentage' => 75,
-                    ],
-                ],
-                'button_text' => 'Learn More',
-                'button_url' => '/about',
-            ],
-            'counter-area' => [
-                'counters' => [
-                    [
-                        'icon' => 'solar',
-                        'number' => '150',
-                        'number_suffix' => 'k',
-                        'title' => 'Projects Done',
-                    ],
-                    [
-                        'icon' => 'rating',
-                        'number' => '25',
-                        'number_suffix' => 'K',
-                        'title' => 'Happy Clients',
-                    ],
-                    [
-                        'icon' => 'staff',
-                        'number' => '120',
-                        'number_suffix' => '+',
-                        'title' => 'Experts Staff',
-                    ],
-                    [
-                        'icon' => 'award',
-                        'number' => '50',
-                        'number_suffix' => '+',
-                        'title' => 'Win Awards',
-                    ],
-                ],
-            ],
-            'blog-area' => [
-                'subtitle' => 'Our Blog',
-                'title' => 'Our Latest News & <span>Blog</span>',
-                'number_to_show' => 3,
-                'sort_order' => 'latest',
-                'button_text' => 'View All Blogs',
-                'button_url' => '/blog',
-                'fallback_title' => 'Coming Soon',
-                'fallback_description' => 'Our blog posts are coming soon. Stay tuned for amazing content!',
-            ],
-            'map-area' => [
-                'embed_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d96708.34194156103!2d-74.03927096447748!3d40.759040329405195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x4a01c8df6fb3cb8!2sSolomon%20R.%20Guggenheim%20Museum!5e0!3m2!1sen!2sbd!4v1619410634508!5m2!1sen!2s',
-            ],
-            'choose-area' => [
-                'subtitle' => 'Why Choose Us',
-                'title' => 'We deliver <span>expertise you can trust</span> our service',
-                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.',
-                'image1' => '',
-                'image2' => '',
-                'items' => [
-                    [
-                        'icon' => 'money-2',
-                        'title' => 'Affordable Cost',
-                        'description' => 'There are many variations of passages available the majority have suffered alteration in some by injected humour.',
-                    ],
-                    [
-                        'icon' => 'staff',
-                        'title' => 'Our Experience Team',
-                        'description' => 'There are many variations of passages available the majority have suffered alteration in some by injected humour.',
-                    ],
-                    [
-                        'icon' => 'certified',
-                        'title' => 'Certified Company',
-                        'description' => 'There are many variations of passages available the majority have suffered alteration in some by injected humour.',
-                    ],
-                ],
-            ],
-            'get-solar-quote' => [
-                'subtitle' => 'Get Your Free Quote',
-                'title' => 'Switch to Solar Energy Today',
-                'description' => 'Join thousands of homeowners who are saving money and helping the environment with solar power. Get a customized quote for your property.',
-                'slider_images' => [
-                    'https://static.vecteezy.com/system/resources/thumbnails/040/995/143/small/ai-generated-fields-of-solar-panels-and-systems-to-produce-green-electricity-ai-generated-photo.jpg',
-                    'https://www.soleosenergy.com/wp-content/uploads/2024/09/1650368737-5-environmental-benefits-of-solar-energy.jpg',
-                ],
-            ],
-            'contact-area' => [
-                'title' => 'Get In Touch',
-                'description' => 'It is a long established fact that a reader will be distracted by the readable content of a page randomised words which don\'t look even slightly when looking at its layout.',
+            'team_members' => [
+                'name' => '',
+                'position' => '',
                 'image' => null,
+                'social_links' => [],
             ],
-            'contact-info' => [
-                'contact_items' => [
-                    [
-                        'icon' => 'map-location-dot',
-                        'title' => 'Office Address',
-                        'content' => '25/B Milford, New York, USA',
-                    ],
-                    [
-                        'icon' => 'phone-volume',
-                        'title' => 'Call Us',
-                        'content' => '+2 123 4565 789',
-                    ],
-                    [
-                        'icon' => 'envelopes',
-                        'title' => 'Email Us',
-                        'content' => 'info@example.com',
-                    ],
-                    [
-                        'icon' => 'alarm-clock',
-                        'title' => 'Open Time',
-                        'content' => 'Mon - Sat (10.00AM - 05.30PM)',
-                    ],
-                ],
+            'team_members.social_links' => [
+                'platform' => '',
+                'url' => '',
             ],
-            'service-dynamic' => [
-                'subtitle' => 'Services',
-                'title' => 'What Services we are <span>provide</span> to you',
-                'number_to_show' => 8,
-                'sort_order' => 'manual',
-                'fallback_title' => 'Coming Soon',
+            'portfolio_items' => [
+                'title' => '',
+                'category' => '',
+                'image' => null,
+                'project_url' => '',
             ],
-            'partner-area' => [
-                'partners' => [
-                    ['image' => null, 'alt' => 'Partner 1'],
-                    ['image' => null, 'alt' => 'Partner 2'],
-                    ['image' => null, 'alt' => 'Partner 3'],
-                    ['image' => null, 'alt' => 'Partner 4'],
-                ],
+            'steps' => [
+                'icon' => 'hybrid',
+                'title' => 'New Step',
+                'description' => 'Step description',
             ],
-            'solar-calculator' => [
-                'subtitle' => 'Get Your Free Quote',
-                'title' => 'Calculate Your Solar Savings',
-                'description' => 'Join thousands of homeowners who are saving money and helping the environment with solar power. Get a customized quote for your property.',
-                'swap_columns' => false,
+            'skills' => [
+                'name' => 'New Skill',
+                'percentage' => 50,
+            ],
+            'counters' => [
+                'icon' => 'solar',
+                'number' => '100',
+                'number_suffix' => '+',
+                'title' => 'New Counter',
+            ],
+            'locations' => [
+                'name' => 'New Location',
+                'address' => '',
+                'phone' => '',
+                'email' => '',
+                'lat' => '',
+                'lng' => '',
+                'icon' => 'fas fa-map-marker-alt',
+                'active' => true,
+                'embed_url' => '',
+                'marker_icon' => null,
+                'directions_url' => '',
+            ],
+            'items' => [
+                'icon' => 'star',
+                'title' => 'New Item',
+                'description' => 'Item description',
+            ],
+            'contact_items' => [
+                'icon' => 'map-marker-alt',
+                'title' => 'New Contact Item',
+                'content' => 'Contact information',
+            ],
+            'slider_images' => '',
+            'partners' => [
+                'image' => null,
+                'alt' => '',
             ],
         ];
 
-        return $defaults[$sectionName] ?? [];
+        return $fallback[$key] ?? [];
+    }
+
+    public function repeaterAdd(int $sectionIndex, string $field): void
+    {
+        if (! isset($this->pageContents[$sectionIndex])) {
+            return;
+        }
+
+        $sectionName = (string) ($this->pageContents[$sectionIndex]['section_name'] ?? '');
+        if ($sectionName === '') {
+            return;
+        }
+
+        if (! isset($this->pageContents[$sectionIndex]['content'][$field]) || ! is_array($this->pageContents[$sectionIndex]['content'][$field])) {
+            $this->pageContents[$sectionIndex]['content'][$field] = [];
+        }
+
+        $this->pageContents[$sectionIndex]['content'][$field][] = $this->getRepeaterDefaultItem($sectionName, $field);
+    }
+
+    public function repeaterRemove(int $sectionIndex, string $field, int $itemIndex): void
+    {
+        if (! isset($this->pageContents[$sectionIndex]['content'][$field][$itemIndex])) {
+            return;
+        }
+
+        unset($this->pageContents[$sectionIndex]['content'][$field][$itemIndex]);
+        $this->pageContents[$sectionIndex]['content'][$field] = array_values($this->pageContents[$sectionIndex]['content'][$field]);
+    }
+
+    public function repeaterAddNested(int $sectionIndex, string $parentField, int $parentIndex, string $field): void
+    {
+        if (! isset($this->pageContents[$sectionIndex])) {
+            return;
+        }
+
+        $sectionName = (string) ($this->pageContents[$sectionIndex]['section_name'] ?? '');
+        if ($sectionName === '') {
+            return;
+        }
+
+        if (! isset($this->pageContents[$sectionIndex]['content'][$parentField][$parentIndex])) {
+            return;
+        }
+
+        if (! isset($this->pageContents[$sectionIndex]['content'][$parentField][$parentIndex][$field]) || ! is_array($this->pageContents[$sectionIndex]['content'][$parentField][$parentIndex][$field])) {
+            $this->pageContents[$sectionIndex]['content'][$parentField][$parentIndex][$field] = [];
+        }
+
+        $key = $parentField.'.'.$field;
+        $this->pageContents[$sectionIndex]['content'][$parentField][$parentIndex][$field][] = $this->getRepeaterDefaultItem($sectionName, $key);
+    }
+
+    public function repeaterRemoveNested(int $sectionIndex, string $parentField, int $parentIndex, string $field, int $itemIndex): void
+    {
+        if (! isset($this->pageContents[$sectionIndex]['content'][$parentField][$parentIndex][$field][$itemIndex])) {
+            return;
+        }
+
+        unset($this->pageContents[$sectionIndex]['content'][$parentField][$parentIndex][$field][$itemIndex]);
+        $this->pageContents[$sectionIndex]['content'][$parentField][$parentIndex][$field] = array_values(
+            $this->pageContents[$sectionIndex]['content'][$parentField][$parentIndex][$field]
+        );
     }
 
     public function removeSection($index)
@@ -600,7 +514,7 @@ class Builder extends Component
                 'meta_keywords' => $this->meta_keywords,
                 'is_published' => $this->is_published,
                 'published_at' => $this->is_published ? ($this->published_at ?: now()) : null,
-                'user_id' => $admin->id,
+                'admin_id' => $admin?->id,
             ]);
 
             // Delete existing contents
@@ -614,7 +528,7 @@ class Builder extends Component
                 'meta_keywords' => $this->meta_keywords,
                 'is_published' => $this->is_published,
                 'published_at' => $this->is_published ? now() : null,
-                'user_id' => $admin->id,
+                'admin_id' => $admin?->id,
             ]);
         }
 
@@ -666,351 +580,6 @@ class Builder extends Component
         $this->is_published = true;
 
         return $this->save();
-    }
-
-    public function addFeature($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['features'])) {
-            $this->pageContents[$sectionIndex]['content']['features'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['features'][] = [
-            'icon' => 'staff',
-            'title' => 'New Feature',
-            'description' => 'Feature description',
-        ];
-    }
-
-    public function removeFeature($sectionIndex, $featureIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['features'][$featureIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['features'][$featureIndex]);
-            $this->pageContents[$sectionIndex]['content']['features'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['features']
-            );
-        }
-    }
-
-    public function addHeroSlider($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['sliders'])) {
-            $this->pageContents[$sectionIndex]['content']['sliders'] = [];
-        }
-
-        $sliderIndex = count($this->pageContents[$sectionIndex]['content']['sliders']);
-
-        $this->pageContents[$sectionIndex]['content']['sliders'][] = [
-            'background_image' => '',
-            'icon' => 'far fa-solar-panel',
-            'subtitle' => 'Professional Service',
-            'title' => 'Save Money With <span>Solar Energy</span> Solutions',
-            'description' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.',
-            'button1_text' => 'Our Services',
-            'button1_url' => '/services',
-            'button2_text' => 'Get Quote',
-            'button2_url' => '/contact',
-        ];
-    }
-
-    public function removeHeroSlider($sectionIndex, $sliderIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['sliders'][$sliderIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['sliders'][$sliderIndex]);
-            $this->pageContents[$sectionIndex]['content']['sliders'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['sliders']
-            );
-        }
-    }
-
-    // Testimonial methods
-    public function addTestimonial($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['testimonials'])) {
-            $this->pageContents[$sectionIndex]['content']['testimonials'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['testimonials'][] = [
-            'author_name' => '',
-            'author_position' => '',
-            'author_image' => null,
-            'rating' => 5,
-            'testimonial_text' => '',
-        ];
-    }
-
-    public function removeTestimonial($sectionIndex, $testimonialIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['testimonials'][$testimonialIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['testimonials'][$testimonialIndex]);
-            $this->pageContents[$sectionIndex]['content']['testimonials'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['testimonials']
-            );
-        }
-    }
-
-    // Team member methods
-    public function addTeamMember($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['team_members'])) {
-            $this->pageContents[$sectionIndex]['content']['team_members'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['team_members'][] = [
-            'name' => '',
-            'position' => '',
-            'image' => null,
-            'social_links' => [],
-        ];
-    }
-
-    public function removeTeamMember($sectionIndex, $memberIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['team_members'][$memberIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['team_members'][$memberIndex]);
-            $this->pageContents[$sectionIndex]['content']['team_members'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['team_members']
-            );
-        }
-    }
-
-    public function addSocialLink($sectionIndex, $memberIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['team_members'][$memberIndex]['social_links'])) {
-            $this->pageContents[$sectionIndex]['content']['team_members'][$memberIndex]['social_links'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['team_members'][$memberIndex]['social_links'][] = [
-            'platform' => '',
-            'url' => '',
-        ];
-    }
-
-    public function removeSocialLink($sectionIndex, $memberIndex, $linkIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['team_members'][$memberIndex]['social_links'][$linkIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['team_members'][$memberIndex]['social_links'][$linkIndex]);
-            $this->pageContents[$sectionIndex]['content']['team_members'][$memberIndex]['social_links'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['team_members'][$memberIndex]['social_links']
-            );
-        }
-    }
-
-    // Portfolio methods
-    public function addPortfolioItem($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['portfolio_items'])) {
-            $this->pageContents[$sectionIndex]['content']['portfolio_items'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['portfolio_items'][] = [
-            'title' => '',
-            'category' => '',
-            'image' => null,
-            'project_url' => '',
-        ];
-    }
-
-    public function removePortfolioItem($sectionIndex, $itemIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['portfolio_items'][$itemIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['portfolio_items'][$itemIndex]);
-            $this->pageContents[$sectionIndex]['content']['portfolio_items'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['portfolio_items']
-            );
-        }
-    }
-
-    // Process Area Methods
-    public function addProcessStep($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['steps'])) {
-            $this->pageContents[$sectionIndex]['content']['steps'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['steps'][] = [
-            'icon' => 'hybrid',
-            'title' => 'New Step',
-            'description' => 'Step description',
-        ];
-    }
-
-    public function removeProcessStep($sectionIndex, $stepIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['steps'][$stepIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['steps'][$stepIndex]);
-            $this->pageContents[$sectionIndex]['content']['steps'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['steps']
-            );
-        }
-    }
-
-    // Skill Area Methods
-    public function addSkill($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['skills'])) {
-            $this->pageContents[$sectionIndex]['content']['skills'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['skills'][] = [
-            'name' => 'New Skill',
-            'percentage' => 50,
-        ];
-    }
-
-    public function removeSkill($sectionIndex, $skillIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['skills'][$skillIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['skills'][$skillIndex]);
-            $this->pageContents[$sectionIndex]['content']['skills'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['skills']
-            );
-        }
-    }
-
-    // Counter Area Methods
-    public function addCounter($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['counters'])) {
-            $this->pageContents[$sectionIndex]['content']['counters'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['counters'][] = [
-            'icon' => 'solar',
-            'number' => '100',
-            'number_suffix' => '+',
-            'title' => 'New Counter',
-        ];
-    }
-
-    public function removeCounter($sectionIndex, $counterIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['counters'][$counterIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['counters'][$counterIndex]);
-            $this->pageContents[$sectionIndex]['content']['counters'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['counters']
-            );
-        }
-    }
-
-    // Map Area Methods
-    public function addMapLocation($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['locations'])) {
-            $this->pageContents[$sectionIndex]['content']['locations'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['locations'][] = [
-            'name' => 'New Location',
-            'address' => '',
-            'phone' => '',
-            'email' => '',
-            'lat' => '',
-            'lng' => '',
-            'icon' => 'fas fa-map-marker-alt',
-            'active' => true,
-            'embed_url' => '',
-            'marker_icon' => null,
-            'directions_url' => '',
-        ];
-    }
-
-    public function removeMapLocation($sectionIndex, $locationIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['locations'][$locationIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['locations'][$locationIndex]);
-            $this->pageContents[$sectionIndex]['content']['locations'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['locations']
-            );
-        }
-    }
-
-    // Choose Area Methods
-    public function addChooseItem($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['items'])) {
-            $this->pageContents[$sectionIndex]['content']['items'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['items'][] = [
-            'icon' => 'star',
-            'title' => 'New Item',
-            'description' => 'Item description',
-        ];
-    }
-
-    public function removeChooseItem($sectionIndex, $itemIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['items'][$itemIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['items'][$itemIndex]);
-            $this->pageContents[$sectionIndex]['content']['items'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['items']
-            );
-        }
-    }
-
-    // Contact Info Methods
-    public function addContactItem($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['contact_items'])) {
-            $this->pageContents[$sectionIndex]['content']['contact_items'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['contact_items'][] = [
-            'icon' => 'map-marker-alt',
-            'title' => 'New Contact Item',
-            'content' => 'Contact information',
-        ];
-    }
-
-    public function removeContactItem($sectionIndex, $itemIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['contact_items'][$itemIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['contact_items'][$itemIndex]);
-            $this->pageContents[$sectionIndex]['content']['contact_items'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['contact_items']
-            );
-        }
-    }
-
-    public function addSliderImage($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['slider_images'])) {
-            $this->pageContents[$sectionIndex]['content']['slider_images'] = [];
-        }
-        $this->pageContents[$sectionIndex]['content']['slider_images'][] = '';
-    }
-
-    public function removeSliderImage($sectionIndex, $imageIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['slider_images'][$imageIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['slider_images'][$imageIndex]);
-            $this->pageContents[$sectionIndex]['content']['slider_images'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['slider_images']
-            );
-        }
-    }
-
-    // Partner Area Methods
-    public function addPartner($sectionIndex)
-    {
-        if (! isset($this->pageContents[$sectionIndex]['content']['partners'])) {
-            $this->pageContents[$sectionIndex]['content']['partners'] = [];
-        }
-
-        $this->pageContents[$sectionIndex]['content']['partners'][] = [
-            'image' => null,
-            'alt' => '',
-        ];
-    }
-
-    public function removePartner($sectionIndex, $partnerIndex)
-    {
-        if (isset($this->pageContents[$sectionIndex]['content']['partners'][$partnerIndex])) {
-            unset($this->pageContents[$sectionIndex]['content']['partners'][$partnerIndex]);
-            $this->pageContents[$sectionIndex]['content']['partners'] = array_values(
-                $this->pageContents[$sectionIndex]['content']['partners']
-            );
-        }
     }
 
     /**

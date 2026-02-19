@@ -21,7 +21,7 @@
                         <div class="flex items-center gap-3">
                             <div
                                 class="h-8 w-8 rounded-md bg-primary-50 text-primary-700 flex items-center justify-center">
-                                <i class="fas fa-solar-panel text-sm"></i>
+                                <span class="text-xs font-bold" aria-hidden="true">G</span>
                             </div>
                             <div class="min-w-0 flex-1">
                                 <p class="text-sm font-semibold text-gray-900 truncate">{{ $global['name'] }}</p>
@@ -45,12 +45,12 @@
             <!-- Available Sections -->
             <x-card>
                 <x-slot:title>Available Sections</x-slot:title>
-                <div class="space-y-2 max-h-96 overflow-y-auto">
+                    <div class="space-y-2 max-h-96 overflow-y-auto">
                     @forelse($availableSections as $key => $section)
                     <div class="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-move transition-colors"
                         draggable="true" @dragstart="dragItem = '{{ $key }}'">
                         <div class="flex items-center">
-                            <i class="fas fa-grip-vertical text-gray-400 mr-3"></i>
+                            <span class="text-gray-400 mr-3 select-none" aria-hidden="true">⋮⋮</span>
                             <div>
                                 <p class="text-sm font-medium text-gray-900">{{ $section['name'] }}</p>
                                 <p class="text-xs text-gray-500">{{ $section['file'] }}</p>
@@ -96,7 +96,6 @@
                     <div class="space-y-4" id="page-builder">
                         @if (count($pageContents) === 0)
                         <div class="text-center py-12">
-                            <i class="fas fa-mouse-pointer text-4xl text-gray-400 mb-4"></i>
                             <p class="text-gray-500">Drag sections here to start building your page</p>
                         </div>
                         @endif
@@ -117,8 +116,7 @@
                             <!-- Section Header -->
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center">
-                                    <i x-show="editingSection !== {{ $index }}"
-                                        class="fas fa-grip-vertical text-gray-400 mr-3"></i>
+                                    <span x-show="editingSection !== {{ $index }}" class="text-gray-400 mr-3 select-none" aria-hidden="true">⋮⋮</span>
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">
                                             {{ $availableSections[$section['section_name']]['name'] ??
@@ -137,29 +135,35 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div
-                                    class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div class="flex items-center gap-2">
                                     @if(empty($section['global_section_id']))
-                                    <button type="button" wire:click="openSaveGlobalModal({{ $index }})"
-                                        class="text-emerald-600 hover:text-emerald-800 text-sm" title="Save as Global">
-                                        <i class="fas fa-globe"></i>
-                                    </button>
+                                        <x-button
+                                            size="xs"
+                                            icon="o-globe-alt"
+                                            tooltip="Save as Global"
+                                            wire:click="openSaveGlobalModal({{ $index }})"
+                                        />
                                     @elseif(empty($section['is_global_override']))
-                                    <button type="button" wire:click="overrideGlobalSection({{ $index }})"
-                                        class="text-amber-600 hover:text-amber-800 text-sm"
-                                        title="Override for this page">
-                                        <i class="fas fa-link-slash"></i>
-                                    </button>
+                                        <x-button
+                                            size="xs"
+                                            icon="o-link-slash"
+                                            tooltip="Override for this page"
+                                            wire:click="overrideGlobalSection({{ $index }})"
+                                        />
                                     @endif
-                                    <button
+                                    <x-button
+                                        size="xs"
+                                        icon="o-pencil"
+                                        tooltip="Edit content"
                                         @click="editingSection = editingSection === {{ $index }} ? null : {{ $index }}"
-                                        class="text-blue-600 hover:text-blue-800 text-sm" title="Edit content">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button @click="$dispatch('confirm-section-delete', { index: {{ $index }} })"
-                                        class="text-red-600 hover:text-red-800 text-sm" title="Remove section">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    />
+                                    <x-button
+                                        size="xs"
+                                        icon="o-trash"
+                                        tooltip="Remove section"
+                                        class="text-red-600"
+                                        wire:click="removeSection({{ $index }})"
+                                    />
                                 </div>
                             </div>
 
@@ -204,50 +208,23 @@
             </x-card>
             <!-- Actions -->
             <div class="flex space-x-3 mt-6">
-                <button type="button" wire:click="saveAsDraft"
-                    class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                    <i class="fas fa-file-alt mr-2"></i>
+                <x-button
+                    outline
+                    icon="o-document"
+                    class="flex-1"
+                    wire:click="saveAsDraft"
+                >
                     Save as Draft
-                </button>
+                </x-button>
 
-                <button type="submit" wire:click="saveAndPublish"
-                    class="flex-1 inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                    <i class="fas fa-paper-plane mr-2"></i>
+                <x-button
+                    primary
+                    icon="o-paper-airplane"
+                    class="flex-1"
+                    wire:click="saveAndPublish"
+                >
                     {{ $page ? 'Update & Publish' : 'Publish Page' }}
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div x-data="{ show: false }" x-show="show"x-init="$el.addEventListener('confirm-section-delete', () => show = true)" @confirm-section-delete.window="
-            const { index } = $event.detail;
-            if (confirm('Are you sure you want to remove this section?')) {
-                @this.call('removeSection', index);
-            }
-            show = false;
-         " x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
-        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3 text-center">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Confirm Delete</h3>
-                <div class="mt-2 px-7 py-3">
-                    <p class="text-sm text-gray-500">Are you sure you want to remove this section?</p>
-                </div>
-                <div class="items-center px-4 py-3">
-                    <button @click="$event.target.closest('.fixed').classList.add('hidden')"
-                        class="px-4 py-2 bg-gray-300 text-gray-800 text-base font-medium rounded-md w-24 mr-2 hover:bg-gray-400">
-                        Cancel
-                    </button>
-                    <button @click="
-                        @this.call('removeSection', $event.detail.index);
-                        $event.target.closest('.fixed').classList.add('hidden');
-                    " class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-24 hover:bg-red-700">
-                        Delete
-                    </button>
-                </div>
+                </x-button>
             </div>
         </div>
     </div>

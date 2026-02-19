@@ -38,23 +38,15 @@
 
             @scope('actions', $page)
                 <div class="flex items-center gap-2">
-                    <x-button icon="o-arrow-top-right-on-square" link="{{ route(config('pagewire.route_names.dynamic', 'dynamic.page'), $page->slug) }}" target="_blank" class="btn-ghost btn-sm" tooltip="View" />
+                    <x-button icon="o-arrow-top-right-on-square" link="{{ route(config('pagewire.route_names.dynamic', 'dynamic.page'), $page->slug) }}" class="btn-ghost btn-sm" tooltip="View" />
 
-                    @if($this->can('edit_pages'))
-                        <x-button icon="o-pencil" link="{{ route(config('pagewire.route_names.builder', 'admin.pages.builder'), $page->slug) }}" class="btn-ghost btn-sm text-primary-600" tooltip="Edit" />
-                    @endif
+                    <x-button icon="o-pencil" link="{{ route(config('pagewire.route_names.builder', 'admin.pages.builder'), $page->slug) }}" class="btn-ghost btn-sm text-primary-600" tooltip="Edit" />
 
-                    @if($this->can('create_pages'))
-                        <x-button icon="o-document-duplicate" wire:click="duplicatePage({{ $page->id }})" class="btn-ghost btn-sm text-info-600" tooltip="Duplicate" />
-                    @endif
+                    <x-button icon="o-document-duplicate" wire:click="duplicatePage({{ $page->id }})" class="btn-ghost btn-sm text-info-600" tooltip="Duplicate" />
 
-                    @if($this->can('publish_pages'))
-                        <x-button :icon="$page->is_published ? 'o-eye-slash' : 'o-eye'" wire:click="togglePublish({{ $page->id }})" class="btn-ghost btn-sm text-success-600" tooltip="{{ $page->is_published ? 'Unpublish' : 'Publish' }}" />
-                    @endif
+                    <x-button :icon="$page->is_published ? 'o-eye-slash' : 'o-eye'" wire:click="togglePublish({{ $page->id }})" class="btn-ghost btn-sm text-success-600" tooltip="{{ $page->is_published ? 'Unpublish' : 'Publish' }}" />
 
-                    @if($this->can('delete_pages'))
-                        <x-button icon="o-trash" wire:click="deletePage({{ $page->id }})" class="btn-ghost btn-sm text-red-600" tooltip="Delete" />
-                    @endif
+                    <x-button icon="o-trash" wire:click="deletePage({{ $page->id }})" class="btn-ghost btn-sm text-red-600" tooltip="Delete" />
                 </div>
             @endscope
         </x-table>

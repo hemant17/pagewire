@@ -38,6 +38,9 @@ This creates:
 - [Mary UI](https://github.com/robsontenorio/mary)
 - [spatie/livewire-filepond](https://github.com/spatie/livewire-filepond)
 
+## Authorization
+This package does not ship Gate/Policy checks. Protect the admin routes using your app middleware/authorization as needed.
+
 ## Models
 The package ships `Page`, `PageContent`, and `GlobalSection` models plus migrations. `admin_id`, `created_by`, and `updated_by` reference your default user provider; override via `PAGEWIRE_USER_MODEL` env/config if needed.
 

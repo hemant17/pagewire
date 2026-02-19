@@ -1,4 +1,6 @@
+
 <x-card>
+    <x-toast />
     <x-header title="Page Management" subtitle="Manage dynamic pages and their content" separator>
         <x-slot:actions>
             <x-button label="New Page" icon="o-plus" link="{{ route(config('pagewire.route_names.builder', 'admin.pages.builder')) }}" />
@@ -46,7 +48,13 @@
 
                     <x-button :icon="$page->is_published ? 'o-eye-slash' : 'o-eye'" wire:click="togglePublish({{ $page->id }})" class="btn-ghost btn-sm text-success-600" tooltip="{{ $page->is_published ? 'Unpublish' : 'Publish' }}" />
 
-                    <x-button icon="o-trash" wire:click="deletePage({{ $page->id }})" class="btn-ghost btn-sm text-red-600" tooltip="Delete" />
+                    <x-button
+                        icon="o-trash"
+                        wire:click="deletePage({{ $page->id }})"
+                        onclick="return confirm('Are you sure you want to delete this page?')"
+                        class="btn-ghost btn-sm text-red-600"
+                        tooltip="Delete"
+                    />
                 </div>
             @endscope
         </x-table>

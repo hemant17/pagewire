@@ -1,8 +1,9 @@
-<x-card x-data="{dragItem: null,dragOverItem: null,editingSection: null}">
+
+<x-card x-data="{dragItem: null,dragOverItem: null,editingSection: null}"><x-toast />
     <x-header :title="$page ? 'Edit Page' : 'Build New Page'"
         subtitle="Create and arrange page sections with drag-and-drop" separator>
         <x-slot:actions>
-            <x-button label="Back to Pages" icon="o-arrow-left" link="{{ route('admin.pages.index') }}" class="btn-primary"  />
+            <x-button label="Back to Pages" icon="o-arrow-left" link="{{ route(config('pagewire.route_names.index', 'admin.pages.index')) }}" class="btn-primary"  />
         </x-slot:actions>
     </x-header>
 

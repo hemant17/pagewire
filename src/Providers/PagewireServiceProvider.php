@@ -2,6 +2,8 @@
 
 namespace Hemant\Pagewire\Providers;
 
+use Hemant\Pagewire\Console\PagewireInstallCommand;
+use Hemant\Pagewire\Console\PagewireMakeSectionCommand;
 use Hemant\Pagewire\Livewire\Admin\Page\Builder;
 use Hemant\Pagewire\Livewire\Admin\Page\Index;
 use Illuminate\Support\ServiceProvider;
@@ -16,6 +18,13 @@ class PagewireServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                PagewireInstallCommand::class,
+                PagewireMakeSectionCommand::class,
+            ]);
+        }
+
         // Routes
         $this->loadRoutesFrom(__DIR__.'/../../routes/pagewire.php');
 

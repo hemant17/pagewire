@@ -8,6 +8,16 @@ return [
         'builder' => 'admin.pages.builder',
         'dynamic' => 'dynamic.page',
     ],
+    // Section templates are discovered by scanning these directories for `*.blade.php`.
+    // Typically you place your front-end section partials in `resources/views/sections`.
+    // If you publish package stubs, you can also use `resources/views/vendor/pagewire/sections`.
+    'sections_paths' => [
+        resource_path('views/sections'),
+        resource_path('views/vendor/pagewire/sections'),
+    ],
+    // Defaults used by `php artisan pagewire:make-section`.
+    'sections_make_path' => resource_path('views/sections'),
+    'editor_make_path' => resource_path('views/livewire/pagewire/section-editors'),
     // Blade layout for Livewire pages (e.g., 'layouts.app'). Set to null to use caller/default.
     'layout' => null,
     // Table and model used for admin/user references on pages/global sections

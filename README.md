@@ -6,6 +6,7 @@ Livewire 4 page builder package for Laravel 12 using Mary UI components. Inspire
 
 ```bash
 composer require hemant/pagewire
+php artisan pagewire:install
 php artisan vendor:publish --tag=pagewire-config --tag=pagewire-migrations --tag=pagewire-views
 php artisan migrate
 ```
@@ -21,7 +22,15 @@ You can change prefix/middleware via `config/pagewire.php`.
 Set `layout` in `config/pagewire.php` (e.g., `'layout' => 'layouts.app'`) to force the Livewire pages to use a specific Blade layout. Leave it `null` to let the caller/default layout apply.
 
 ## Sections
-Builder lists templates from `resources/views/sections/*.blade.php`. Provide matching section editor partials at `resources/views/livewire/admin/page/section-editors/{section}.blade.php` (or rely on the package defaults like the `hero-area` example).
+Builder lists templates by scanning `config('pagewire.sections_paths')` (defaults include `resources/views/sections/*.blade.php`). Provide matching section editor partials at `resources/views/livewire/admin/page/section-editors/{section}.blade.php` (or rely on the package defaults like the `hero-area` example).
+
+Quick scaffolding:
+```bash
+php artisan pagewire:make-section hero-area
+```
+This creates:
+- Front-end section: `resources/views/sections/hero-area.blade.php`
+- Builder editor override (namespaced): `resources/views/livewire/pagewire/section-editors/hero-area.blade.php`
 
 ## Dependencies
 - Laravel ^12

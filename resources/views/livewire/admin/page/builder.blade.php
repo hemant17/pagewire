@@ -9,7 +9,6 @@
     <!-- Builder Container -->
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <!-- Sidebar -->
-        <x-button label="Hi!" class="btn-primary" />
 
         <div class="lg:col-span-1">
 

@@ -99,15 +99,22 @@ class Builder extends Component
 
     private function getAvailableSections(): array
     {
-        $sectionsPath = resource_path('views/sections');
         $sections = [];
 
-        if (is_dir($sectionsPath)) {
-            $files = glob($sectionsPath.'/*.blade.php');
+        $paths = config('pagewire.sections_paths', [resource_path('views/sections')]);
+
+        foreach ($paths as $sectionsPath) {
+            if (! is_string($sectionsPath) || ! is_dir($sectionsPath)) {
+                continue;
+            }
+
+            $files = glob(rtrim($sectionsPath, '/')."/*.blade.php") ?: [];
 
             foreach ($files as $file) {
                 $filename = basename($file, '.blade.php');
                 $displayName = $this->formatSectionName($filename);
+
+                // Later paths override earlier ones if filenames collide.
                 $sections[$filename] = [
                     'name' => $displayName,
                     'file' => $filename,
@@ -1184,8 +1191,14 @@ class Builder extends Component
 
     public function getEditorView($sectionName)
     {
+        // Preferred override location (keeps package overrides namespaced).
+        $namespacedAppView = 'livewire.pagewire.section-editors.'.$sectionName;
         $appView = 'livewire.admin.page.section-editors.'.$sectionName;
         $packageView = 'pagewire::livewire.admin.page.section-editors.'.$sectionName;
+
+        if (view()->exists($namespacedAppView)) {
+            return $namespacedAppView;
+        }
 
         if (view()->exists($appView)) {
             return $appView;

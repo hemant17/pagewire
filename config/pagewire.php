@@ -39,6 +39,21 @@ return [
             'https://cdn.jsdelivr.net/npm/photoswipe@5.4.3/dist/umd/photoswipe.umd.min.js',
         ],
     ],
+    // Menu Manager
+    'menu' => [
+        'admin_prefix' => 'admin/menus',
+        'route_names' => [
+            'manager' => 'admin.menus.manager',
+        ],
+        // Register locations here. Key is stored in DB assignments.
+        'locations' => [
+            'header' => 'Header',
+            'footer' => 'Footer',
+        ],
+        // Which route to use when adding a Page as a menu item.
+        // Defaults to Pagewire's dynamic page route.
+        'page_route_name' => 'dynamic.page',
+    ],
     // Blade layout for Livewire pages (e.g., 'layouts.app'). Set to null to use caller/default.
     'layout' => null,
     // Table and model used for admin/user references on pages/global sections

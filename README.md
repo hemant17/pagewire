@@ -14,6 +14,7 @@ php artisan migrate
 ## Routes
 - Admin index: `admin/pages` (name: `admin.pages.index`)
 - Builder: `admin/pages/builder/{slug?}` (name: `admin.pages.builder`)
+- Menu manager: `admin/menus` (name: `admin.menus.manager`)
 - Public page: `/pages/{slug}` (name: `dynamic.page`)
 
 You can change prefix/middleware via `config/pagewire.php`.
@@ -89,3 +90,15 @@ The included `pagewire::page` view loops the stored sections and includes `secti
 By default, Pagewire can load editor-related assets from CDNs on the builder page. Configure in `config/pagewire.php`:
 - `pagewire.cdn_assets.enabled` (set `false` if your app bundles these)
 - `pagewire.cdn_assets.styles` / `pagewire.cdn_assets.scripts`
+
+## Menu manager
+Configure locations in `config/pagewire.php`:
+```php
+'menu' => [
+  'locations' => [
+    'header' => 'Header',
+    'footer' => 'Footer',
+  ],
+]
+```
+Then visit `admin/menus` to create menus, assign them to locations, and build nested menu items (drag-sort within each level; indent/outdent via buttons).

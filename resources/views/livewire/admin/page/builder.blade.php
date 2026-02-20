@@ -1,6 +1,8 @@
 <div>
 <x-toast />
-<x-pagewire::assets />
+@push('header')
+    <x-pagewire::assets />
+@endpush
 
 <x-card x-data="{dragItem: null,dragOverItem: null,editingSection: null}">
     <x-header :title="$page ? 'Edit Page' : 'Build New Page'"

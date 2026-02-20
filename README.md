@@ -54,6 +54,18 @@ wire:click="repeaterAddNested({{ $index }}, 'team_members', {{ $memberIndex }}, 
 wire:click="repeaterRemoveNested({{ $index }}, 'team_members', {{ $memberIndex }}, 'social_links', {{ $linkIndex }})"
 ```
 
+## File uploads
+Pagewire ships an anonymous Blade component you can use in your editor partials:
+```blade
+<x-pagewire::file-upload
+  label="Background Image"
+  accept="image/*"
+  :aspectRatio="null"
+  wire:model.live="pageContents.{{ $index }}.content.background_image"
+/>
+```
+Component view: `resources/views/components/file-upload.blade.php`.
+
 ## Dependencies
 - Laravel ^12
 - Livewire ^4
@@ -72,3 +84,8 @@ The package ships `Page`, `PageContent`, and `GlobalSection` models plus migrati
 
 ## Rendering public pages
 The included `pagewire::page` view loops the stored sections and includes `sections.{section_name}`. Provide your front-end section blades there.
+
+## Editor assets (Quill, Cropper, etc.)
+By default, Pagewire can load editor-related assets from CDNs on the builder page. Configure in `config/pagewire.php`:
+- `pagewire.cdn_assets.enabled` (set `false` if your app bundles these)
+- `pagewire.cdn_assets.styles` / `pagewire.cdn_assets.scripts`

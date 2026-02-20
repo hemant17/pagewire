@@ -20,6 +20,25 @@ return [
     'editor_make_path' => resource_path('views/livewire/pagewire/section-editors'),
     // Per-section defaults/repeater schemas live here (one PHP file per section).
     'definitions_path' => resource_path('pagewire/sections'),
+    // External assets used by built-in editors (CDN). Disable if your app bundles these yourself.
+    'cdn_assets' => [
+        'enabled' => true,
+        'styles' => [
+            'https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css',
+            'https://cdn.jsdelivr.net/npm/quill-resize-module@2.0.8/dist/resize.min.css',
+            'https://cdn.jsdelivr.net/npm/quill-table-better@1/dist/quill-table-better.css',
+            'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css',
+            'https://cdn.jsdelivr.net/npm/photoswipe@5.4.3/dist/photoswipe.min.css',
+        ],
+        'scripts' => [
+            'https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js',
+            'https://cdn.jsdelivr.net/npm/quill-resize-module@2.0.8/dist/resize.min.js',
+            'https://cdn.jsdelivr.net/npm/quill-table-better@1/dist/quill-table-better.js',
+            'https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js',
+            'https://cdn.jsdelivr.net/npm/photoswipe@5.4.3/dist/umd/photoswipe.umd.min.js',
+        ],
+    ],
     // Blade layout for Livewire pages (e.g., 'layouts.app'). Set to null to use caller/default.
     'layout' => null,
     // Table and model used for admin/user references on pages/global sections

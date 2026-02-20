@@ -16,10 +16,10 @@
                 <x-slot:title>Single Slider Configuration</x-slot:title>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <x-input
+                    <x-pagewire::file-upload
                         label="Background Image"
-                        type="file"
                         accept="image/*"
+                        :aspectRatio="null"
                         wire:model.live="pageContents.{{ $index }}.content.background_image"
                     />
 
@@ -103,10 +103,10 @@
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <x-input
+                                <x-pagewire::file-upload
                                     label="Background Image"
-                                    type="file"
                                     accept="image/*"
+                                    :aspectRatio="null"
                                     wire:model.live="pageContents.{{ $index }}.content.sliders.{{ $sliderIndex }}.background_image"
                                 />
                                 <x-input

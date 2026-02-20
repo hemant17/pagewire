@@ -1,5 +1,8 @@
+<div>
+<x-toast />
+<x-pagewire::assets />
 
-<x-card x-data="{dragItem: null,dragOverItem: null,editingSection: null}"><x-toast />
+<x-card x-data="{dragItem: null,dragOverItem: null,editingSection: null}">
     <x-header :title="$page ? 'Edit Page' : 'Build New Page'"
         subtitle="Create and arrange page sections with drag-and-drop" separator>
         <x-slot:actions>
@@ -243,3 +246,4 @@
         </x-slot:actions>
     </x-modal>
 </x-card>
+</div>

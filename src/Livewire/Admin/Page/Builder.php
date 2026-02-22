@@ -28,6 +28,8 @@ class Builder extends Component
 
     public $is_published = false;
 
+    public $is_home = false;
+
     public $published_at = null;
 
     public $availableSections = [];
@@ -57,6 +59,7 @@ class Builder extends Component
             'meta_description' => 'nullable|string|max:255',
             'meta_keywords' => 'nullable|string|max:255',
             'is_published' => 'boolean',
+            'is_home' => 'boolean',
         ];
     }
 
@@ -70,6 +73,7 @@ class Builder extends Component
             $this->meta_description = $this->page->meta_description;
             $this->meta_keywords = $this->page->meta_keywords;
             $this->is_published = $this->page->is_published;
+            $this->is_home = (bool) ($this->page->is_home ?? false);
             $this->published_at = $this->page->published_at;
 
             // Load existing sections
@@ -513,6 +517,7 @@ class Builder extends Component
                 'meta_description' => $this->meta_description,
                 'meta_keywords' => $this->meta_keywords,
                 'is_published' => $this->is_published,
+                'is_home' => $this->is_home,
                 'published_at' => $this->is_published ? ($this->published_at ?: now()) : null,
                 'admin_id' => $admin?->id,
             ]);
@@ -527,9 +532,15 @@ class Builder extends Component
                 'meta_description' => $this->meta_description,
                 'meta_keywords' => $this->meta_keywords,
                 'is_published' => $this->is_published,
+                'is_home' => $this->is_home,
                 'published_at' => $this->is_published ? now() : null,
                 'admin_id' => $admin?->id,
             ]);
+        }
+
+        // Keep homepage unique (soft-enforced in app logic for portability).
+        if ($this->is_home && $this->page?->id) {
+            Page::where('id', '!=', $this->page->id)->where('is_home', true)->update(['is_home' => false]);
         }
 
         // Save page contents

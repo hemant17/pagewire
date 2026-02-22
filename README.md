@@ -19,6 +19,15 @@ php artisan migrate
 
 You can change prefix/middleware via `config/pagewire.php`.
 
+## Home page (optional)
+If you want Pagewire to render a "home" page at `/`, enable:
+```php
+'home' => [
+  'register_route' => true,
+],
+```
+Pagewire will render the page marked `is_home = true` (if the column exists), otherwise it will fall back to the slug configured by `pagewire.home.fallback_slug` (default: `home`).
+
 ## Layout
 Set `layout` in `config/pagewire.php` (e.g., `'layout' => 'layouts.app'`) to force the Livewire pages to use a specific Blade layout. Leave it `null` to let the caller/default layout apply.
 

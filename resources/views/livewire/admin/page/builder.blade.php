@@ -85,6 +85,7 @@
                     <x-input label="Meta Keywords" wire:model="meta_keywords"
                         placeholder="keyword1, keyword2, keyword3" />
 
+                    <x-checkbox label="Set as Homepage (/) " wire:model="is_home" />
                     <x-checkbox label="Publish immediately" wire:model="is_published" />
                     <p class="mt-1 text-xs text-gray-500">Uncheck to save as draft</p>
                 </form>

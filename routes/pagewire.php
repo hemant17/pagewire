@@ -5,6 +5,7 @@ use Hemant\Pagewire\Livewire\Admin\Page\Index;
 use Hemant\Pagewire\Livewire\Admin\Menu\Manager as MenuManager;
 use Hemant\Pagewire\Models\Page;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 
 Route::middleware(config('pagewire.admin_middleware', ['web']))
     ->prefix(config('pagewire.admin_prefix', 'admin/pages'))
@@ -33,3 +34,38 @@ Route::middleware('web')
             'page' => $page,
         ]);
     });
+
+// Optional home page renderer at "/"
+if (config('pagewire.home.register_route', false)) {
+    Route::middleware('web')
+        ->name(config('pagewire.home.route_name', 'dynamic.home'))
+        ->get('/', function () {
+            $query = Page::with(['contents' => function ($q) {
+                $q->orderBy('sort_order');
+            }, 'contents.globalSection']);
+
+            if (config('pagewire.home.require_published', true)) {
+                $query->where('is_published', true);
+            }
+
+            // Prefer the explicitly-marked homepage when the column exists.
+            $page = null;
+            if (Schema::hasColumn('pages', 'is_home')) {
+                $page = (clone $query)->where('is_home', true)->first();
+            }
+
+            // Fallback to a conventional slug like "home".
+            if (! $page) {
+                $fallbackSlug = (string) config('pagewire.home.fallback_slug', 'home');
+                if ($fallbackSlug !== '') {
+                    $page = (clone $query)->where('slug', $fallbackSlug)->first();
+                }
+            }
+
+            abort_unless($page, 404);
+
+            return view('pagewire::page', [
+                'page' => $page,
+            ]);
+        });
+}

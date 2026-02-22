@@ -4,6 +4,7 @@ namespace Hemant\Pagewire\Livewire\Admin\Page;
 
 use Hemant\Pagewire\Models\Page;
 use Hemant\Pagewire\Models\PageContent;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Mary\Traits\Toast;

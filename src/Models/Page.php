@@ -15,12 +15,14 @@ class Page extends Model
         'meta_description',
         'meta_keywords',
         'is_published',
+        'is_home',
         'published_at',
         'admin_id',
     ];
 
     protected $casts = [
         'is_published' => 'boolean',
+        'is_home' => 'boolean',
         'published_at' => 'datetime',
     ];
 

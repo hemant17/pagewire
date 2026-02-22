@@ -8,6 +8,17 @@ return [
         'builder' => 'admin.pages.builder',
         'dynamic' => 'dynamic.page',
     ],
+    // Home page support.
+    // To avoid conflicts with existing apps, the "/" route is NOT registered by default.
+    // Enable it to render the page marked as home (or the fallback slug) at "/".
+    'home' => [
+        'register_route' => env('PAGEWIRE_REGISTER_HOME_ROUTE', false),
+        'route_name' => 'dynamic.home',
+        // Used when no page is explicitly marked as home.
+        'fallback_slug' => 'home',
+        // Only render published pages on the front-end.
+        'require_published' => true,
+    ],
     // Section templates are discovered by scanning these directories for `*.blade.php`.
     // Typically you place your front-end section partials in `resources/views/sections`.
     // If you publish package stubs, you can also use `resources/views/vendor/pagewire/sections`.

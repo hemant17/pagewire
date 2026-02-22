@@ -1,3 +1,4 @@
+![pagewire](https://socialify.git.ci/hemant17/pagewire/image?custom_language=Laravel&font=Source+Code+Pro&language=1&logo=https%3A%2F%2Fcdn.freebiesupply.com%2Flogos%2Flarge%2F2x%2Fpage-logo-png-transparent.png&name=1&owner=1&pattern=Circuit+Board&stargazers=1&theme=Light)
 # Pagewire
 
 Livewire 4 page builder package for Laravel 12 using Mary UI components. Inspired by existing implementation with reusable/global sections.

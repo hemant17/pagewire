@@ -23,20 +23,38 @@ Route::middleware(config('pagewire.admin_middleware', ['web']))
 
 // Public dynamic page renderer (optional)
 $publicPrefix = trim((string) config('pagewire.public_prefix', 'pages'), '/');
-$publicPath = ($publicPrefix !== '' ? '/'.$publicPrefix : '').'/{slug}';
+$dynamicRouteName = config('pagewire.route_names.dynamic', 'dynamic.page');
 
-Route::middleware('web')
-    ->name(config('pagewire.route_names.dynamic', 'dynamic.page'))
-    ->get($publicPath, function ($slug) {
-        /** @var Page|null $page */
-        $page = Page::with(['contents' => function ($q) {
-            $q->orderBy('sort_order');
-        }, 'contents.globalSection'])->where('slug', $slug)->where('is_published', true)->firstOrFail();
+if ($publicPrefix === '') {
+    // "/{slug}" should never shadow app routes, so make it a fallback route.
+    Route::middleware('web')
+        ->get('/{slug}', function ($slug) {
+            /** @var Page|null $page */
+            $page = Page::with(['contents' => function ($q) {
+                $q->orderBy('sort_order');
+            }, 'contents.globalSection'])->where('slug', $slug)->where('is_published', true)->firstOrFail();
 
-        return view('pagewire::page', [
-            'page' => $page,
-        ]);
-    });
+            return view('pagewire::page', [
+                'page' => $page,
+            ]);
+        })
+        ->where('slug', '[^/]+')
+        ->fallback()
+        ->name($dynamicRouteName);
+} else {
+    Route::middleware('web')
+        ->name($dynamicRouteName)
+        ->get('/'.$publicPrefix.'/{slug}', function ($slug) {
+            /** @var Page|null $page */
+            $page = Page::with(['contents' => function ($q) {
+                $q->orderBy('sort_order');
+            }, 'contents.globalSection'])->where('slug', $slug)->where('is_published', true)->firstOrFail();
+
+            return view('pagewire::page', [
+                'page' => $page,
+            ]);
+        });
+}
 
 // Optional home page renderer at "/"
 if (config('pagewire.home.register_route', false)) {

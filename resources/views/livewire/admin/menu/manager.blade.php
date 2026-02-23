@@ -69,7 +69,11 @@
                             <div class="p-3 flex items-center justify-between gap-3">
                                 <div class="min-w-0">
                                     <div class="text-sm font-medium text-gray-900 truncate">{{ $p->title }}</div>
-                                    <div class="text-xs text-gray-500 truncate">/{{ $p->slug }}</div>
+                                    @php
+                                        $publicPrefix = trim((string) config('pagewire.public_prefix', 'pages'), '/');
+                                        $path = ($publicPrefix !== '' ? '/'.$publicPrefix : '').'/'.ltrim((string) $p->slug, '/');
+                                    @endphp
+                                    <div class="text-xs text-gray-500 truncate">{{ $path }}</div>
                                 </div>
                                 <x-button size="xs" icon="o-plus" class="btn-primary" wire:click="addPageItem({{ $p->id }})">Add</x-button>
                             </div>

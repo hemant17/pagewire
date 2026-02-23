@@ -191,7 +191,8 @@ class Manager extends Component
         try {
             $url = route($routeName, $page->slug);
         } catch (\Throwable $e) {
-            $url = '/pages/'.$page->slug;
+            $publicPrefix = trim((string) config('pagewire.public_prefix', 'pages'), '/');
+            $url = ($publicPrefix !== '' ? '/'.$publicPrefix : '').'/'.$page->slug;
         }
 
         $sort = $this->nextSortOrder($parentId);

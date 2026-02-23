@@ -77,7 +77,11 @@
                     <x-input label="Title " wire:model.live="title" placeholder="Page title" required />
 
                     <x-input label="Slug " wire:model="slug" placeholder="page-slug" required />
-                    <p class="mt-1 text-xs text-gray-500">URL: /{{ $slug }}</p>
+                    @php
+                        $publicPrefix = trim((string) config('pagewire.public_prefix', 'pages'), '/');
+                        $path = ($publicPrefix !== '' ? '/'.$publicPrefix : '').'/'.ltrim((string) $slug, '/');
+                    @endphp
+                    <p class="mt-1 text-xs text-gray-500">URL: {{ $slug ? $path : ($publicPrefix !== '' ? '/'.$publicPrefix : '/') }}</p>
 
                     <x-textarea label="Meta Description" wire:model="meta_description"
                         placeholder="SEO meta description" rows="2" maxlength="255" />

@@ -8,6 +8,9 @@ return [
         'builder' => 'admin.pages.builder',
         'dynamic' => 'dynamic.page',
     ],
+    // Public page URL prefix. Default: "/pages/{slug}".
+    // Set to empty string to use "/{slug}" (be careful: this can conflict with your app routes).
+    'public_prefix' => env('PAGEWIRE_PUBLIC_PREFIX', 'pages'),
     // Home page support.
     // To avoid conflicts with existing apps, the "/" route is NOT registered by default.
     // Enable it to render the page marked as home (or the fallback slug) at "/".

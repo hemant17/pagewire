@@ -27,7 +27,11 @@ class PagewireServiceProvider extends ServiceProvider
         }
 
         // Routes
-        $this->loadRoutesFrom(__DIR__.'/../../routes/pagewire.php');
+        // Register after the app routes so the optional catch-all public route ("/{slug}")
+        // does not shadow user-defined routes like "/test".
+        $this->app->booted(function () {
+            $this->loadRoutesFrom(__DIR__.'/../../routes/pagewire.php');
+        });
 
         // Views
         $this->loadViewsFrom(__DIR__.'/../../resources/views', 'pagewire');

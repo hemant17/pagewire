@@ -23,7 +23,11 @@
             @endscope
 
             @scope('cell_slug', $page)
-                <span class="text-gray-600">/{{ $page->slug }}</span>
+                @php
+                    $publicPrefix = trim((string) config('pagewire.public_prefix', 'pages'), '/');
+                    $path = ($publicPrefix !== '' ? '/'.$publicPrefix : '').'/'.ltrim((string) $page->slug, '/');
+                @endphp
+                <span class="text-gray-600">{{ $path }}</span>
             @endscope
 
             @scope('cell_is_published', $page)

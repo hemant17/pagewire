@@ -15,7 +15,7 @@ php artisan migrate
 - Admin index: `admin/pages` (name: `admin.pages.index`)
 - Builder: `admin/pages/builder/{slug?}` (name: `admin.pages.builder`)
 - Menu manager: `admin/menus` (name: `admin.menus.manager`)
-- Public page: `/pages/{slug}` (name: `dynamic.page`)
+- Public page: `/{public_prefix}/{slug}` (default: `/pages/{slug}`) (name: `dynamic.page`)
 
 You can change prefix/middleware via `config/pagewire.php`.
 

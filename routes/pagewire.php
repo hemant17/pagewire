@@ -22,9 +22,12 @@ Route::middleware(config('pagewire.admin_middleware', ['web']))
     });
 
 // Public dynamic page renderer (optional)
+$publicPrefix = trim((string) config('pagewire.public_prefix', 'pages'), '/');
+$publicPath = ($publicPrefix !== '' ? '/'.$publicPrefix : '').'/{slug}';
+
 Route::middleware('web')
-    ->name('dynamic.page')
-    ->get('/pages/{slug}', function ($slug) {
+    ->name(config('pagewire.route_names.dynamic', 'dynamic.page'))
+    ->get($publicPath, function ($slug) {
         /** @var Page|null $page */
         $page = Page::with(['contents' => function ($q) {
             $q->orderBy('sort_order');

@@ -445,6 +445,10 @@ class Manager extends Component
         $view = view('pagewire::livewire.admin.menu.manager');
 
         $layout = config('pagewire.layout');
+        if ($layout === null && view()->exists('layouts.admin')) {
+            // Sensible default for admin pages when the host app has an admin layout.
+            $layout = 'layouts.admin';
+        }
 
         return $layout ? $view->layout($layout) : $view;
     }

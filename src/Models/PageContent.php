@@ -12,6 +12,7 @@ class PageContent extends Model
         'global_section_id',
         'is_global_override',
         'section_name',
+        'col_span',
         'content',
         'sort_order',
     ];

@@ -85,6 +85,7 @@ class Builder extends Component
                 $this->pageContents[] = [
                     'id' => $content->id,
                     'section_name' => $content->section_name,
+                    'col_span' => (int) ($content->col_span ?? 12),
                     'content' => $this->convertExistingContent($contentPayload),
                     'sort_order' => $content->sort_order,
                     'global_section_id' => $content->global_section_id,
@@ -142,6 +143,7 @@ class Builder extends Component
         $this->pageContents[] = [
             'id' => null,
             'section_name' => $sectionName,
+            'col_span' => 12,
             'content' => $this->getDefaultSectionContent($sectionName),
             'sort_order' => count($this->pageContents),
             'global_section_id' => null,
@@ -163,6 +165,7 @@ class Builder extends Component
         $this->pageContents[] = [
             'id' => null,
             'section_name' => $global->section_name,
+            'col_span' => 12,
             'content' => $this->convertExistingContent($global->content ?? []),
             'sort_order' => count($this->pageContents),
             'global_section_id' => $global->id,
@@ -565,6 +568,7 @@ class Builder extends Component
                 'global_section_id' => $section['global_section_id'] ?? null,
                 'is_global_override' => (bool) ($section['is_global_override'] ?? false),
                 'section_name' => $section['section_name'],
+                'col_span' => (int) ($section['col_span'] ?? 12),
                 'content' => $processedContent,
                 'sort_order' => $section['sort_order'],
             ]);
@@ -765,6 +769,10 @@ class Builder extends Component
         ]);
 
         $layout = config('pagewire.layout');
+        if ($layout === null && view()->exists('layouts.admin')) {
+            // Sensible default for admin pages when the host app has an admin layout.
+            $layout = 'layouts.admin';
+        }
 
         return $layout ? $view->layout($layout) : $view;
     }

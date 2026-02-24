@@ -16,7 +16,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <!-- Sidebar -->
 
-        <div class="lg:col-span-1">
+        <div class="lg:col-span-1 lg:sticky lg:top-6 self-start">
 
             <!-- Global Sections -->
             <x-card class="mb-6">
@@ -101,20 +101,38 @@
             <x-card>
                 <x-slot:title>Page Builder</x-slot:title>
                 <!-- Drop Zone -->
-                <div class="min-h-[400px] border-2 border-dashed border-gray-300 rounded-lg p-4" @dragover.prevent="dragOverItem = 'page-builder'" @dragleave="dragOverItem = null" @drop.prevent="if (dragItem) {@this.call('addSection', dragItem);dragItem = null;dragOverItem = null;}" :class="{ 'border-primary-500 bg-primary-50': dragOverItem === 'page-builder' }">
+                <div
+                    class="min-h-[400px] border-2 border-dashed border-gray-300 rounded-lg p-4"
+                    @dragover.prevent="dragOverItem = 'page-builder'"
+                    @dragleave="dragOverItem = null"
+                    @drop.prevent="if (dragItem && typeof dragItem === 'string') {@this.call('addSection', dragItem);dragItem = null;dragOverItem = null;}"
+                    :class="{ 'border-primary-500 bg-primary-50': dragOverItem === 'page-builder' }"
+                >
 
                     <!-- Page Sections -->
-                    <div class="space-y-4" id="page-builder">
+                    <div class="grid grid-cols-12 gap-4" id="page-builder">
                         @if (count($pageContents) === 0)
-                        <div class="text-center py-12">
+                        <div class="col-span-12 text-center py-12">
                             <p class="text-gray-500">Drag sections here to start building your page</p>
                         </div>
                         @endif
                         @forelse($pageContents as $index => $section)
-                       <div class="relative group bg-white border border-gray-200 rounded-lg p-4 transition-all"
-                            :class="editingSection === {{ $index }} ? 'cursor-default' : 'cursor-move'"
-                            :draggable="editingSection !== {{ $index }}"
-                            @dragstart="if (editingSection !== {{ $index }}) { dragItem = {{ $index }}; editingSection = null; }"
+                        @php
+                            $span = (int) ($section['col_span'] ?? 12);
+                            $spanClasses = [
+                                12 => 'lg:col-span-12',
+                                9 => 'lg:col-span-9',
+                                8 => 'lg:col-span-8',
+                                6 => 'lg:col-span-6',
+                                4 => 'lg:col-span-4',
+                                3 => 'lg:col-span-3',
+                            ];
+                            $colClass = $spanClasses[$span] ?? 'lg:col-span-12';
+                        @endphp
+                       <div
+                            wire:key="page-content-{{ $section['uuid'] ?? ($section['id'] ?? $index) }}"
+                            class="col-span-12 {{ $colClass }} relative group bg-white border border-gray-200 rounded-lg p-4 transition-all"
+                            :class="editingSection === {{ $index }} ? 'cursor-default' : 'cursor-default'"
                             @dragover.prevent="dragOverItem = {{ $index }}; $el.classList.add('border-t-4', 'border-t-primary-500')"
                             @dragleave="dragOverItem = null; $el.classList.remove('border-t-4', 'border-t-primary-500')"
                             @drop.prevent="
@@ -127,7 +145,13 @@
                             <!-- Section Header -->
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center">
-                                    <span x-show="editingSection !== {{ $index }}" class="text-gray-400 mr-3 select-none" aria-hidden="true">⋮⋮</span>
+                                    <span
+                                        x-show="editingSection !== {{ $index }}"
+                                        class="text-gray-400 mr-3 select-none cursor-move"
+                                        aria-hidden="true"
+                                        draggable="true"
+                                        @dragstart="dragItem = {{ $index }}; editingSection = null;"
+                                    >⋮⋮</span>
                                     <div>
                                         <p class="text-sm font-medium text-gray-900">
                                             {{ $availableSections[$section['section_name']]['name'] ??
@@ -147,6 +171,19 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2">
+                                    <x-select
+                                        wire:model.live="pageContents.{{ $index }}.col_span"
+                                        :options="[
+                                            ['id' => 12, 'name' => '12/12'],
+                                            ['id' => 8, 'name' => '8/12'],
+                                            ['id' => 6, 'name' => '6/12'],
+                                            ['id' => 4, 'name' => '4/12'],
+                                            ['id' => 3, 'name' => '3/12'],
+                                        ]"
+                                        option-label="name"
+                                        option-value="id"
+                                        class="w-28"
+                                    />
                                     @if(empty($section['global_section_id']))
                                         <x-button
                                             size="xs"
@@ -187,7 +224,7 @@
                                         Editing this section will update the global section everywhere.
                                     </div>
                                     @endif
-                                    <div wire:key="section-{{ $index }}">
+                                    <div wire:key="section-editor-{{ $section['uuid'] ?? ($section['id'] ?? $index) }}">
                                         {{-- <!-- DEBUG: Section: {{ $section['section_name'] }}, Editor: {{ $editorView }}, Exists: {{ $editorExists ? 'YES' : 'NO' }} --> --}}
                                         @include($this->getEditorView($section['section_name']), ['index' => $index])
                                     </div>
